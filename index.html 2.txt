@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>منيو جَمَار — Jamar Menu</title>
+
+  <!-- خطوط -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --orange:#FF7A00;
+      --maroon:#800020;
+      --beige:#F5E6D3;
+      --text:#3a2f2f;
+      --muted:#7a6a63;
+      --card-radius:14px;
+      --max-width:1100px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;padding:0;background:linear-gradient(180deg,#fff,var(--beige));font-family:"Cairo",sans-serif;color:var(--text)}
+    .container{max-width:var(--max-width);margin:24px auto;padding:0 18px;}
+    .wrap{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 12px 30px rgba(0,0,0,0.08)}
+    header{display:flex;align-items:center;justify-content:space-between;padding:20px 22px;background:linear-gradient(90deg,var(--maroon),#5b0d11);color:#fff}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:64px;height:64px;border-radius:12px;background:linear-gradient(180deg,var(--orange),#ff6a00);display:flex;align-items:center;justify-content:center;font-family:"Playfair Display",serif;font-weight:700;font-size:22px;color:#fff;box-shadow:0 8px 22px rgba(0,0,0,0.15)}
+    .brand .name{font-family:"Playfair Display",serif;font-size:20px}
+    .brand .sub{font-size:12px;opacity:0.95}
+    .header-actions{display:flex;gap:10px;align-items:center}
+    .btn{background:var(--orange);color:#fff;border:0;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:700}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.18);color:#fff}
+    .hero{padding:26px 28px;display:flex;gap:18px;align-items:center}
+    .hero .intro{flex:1}
+    .hero h1{margin:0;font-family:"Playfair Display",serif;color:var(--maroon);font-size:28px}
+    .hero p{margin:6px 0 0;color:var(--muted)}
+
+    /* sections grid */
+    .sections{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:18px}
+    .card{background:linear-gradient(180deg,#fff,#fff9f2);padding:18px;border-radius:12px;border:1px solid rgba(0,0,0,0.03);cursor:pointer;display:flex;flex-direction:column;gap:10px;align-items:flex-end;min-height:120px;transition:transform .18s,box-shadow .18s}
+    .card:hover{transform:translateY(-6px);box-shadow:0 14px 30px rgba(0,0,0,0.08)}
+    .card .icon{width:64px;height:64px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--maroon);background:rgba(128,0,32,0.05);font-size:14px;border:1px dashed rgba(0,0,0,0.04)}
+    .card .title{font-weight:700;color:var(--maroon);font-size:16px}
+    .card .subtitle{font-size:12px;color:var(--muted)}
+    .card small{color:var(--muted);align-self:flex-start}
+
+    /* responsive */
+    @media (max-width:980px){.sections{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:640px){.sections{grid-template-columns:1fr}.hero{flex-direction:column;align-items:flex-start}}
+
+    /* modal */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;padding:18px;z-index:1200}
+    .modal{background:#fff;width:100%;max-width:720px;border-radius:12px;padding:18px;box-shadow:0 20px 50px rgba(0,0,0,0.3);max-height:90vh;overflow:auto}
+    .modal header{display:flex;align-items:center;justify-content:space-between;padding:0;margin-bottom:8px;background:transparent;color:var(--maroon)}
+    .modal h3{margin:0;font-family:"Playfair Display",serif}
+    .items{display:grid;grid-template-columns:1fr;gap:10px;margin-top:12px}
+    .item{display:flex;gap:12px;align-items:center;padding:10px;border-radius:10px;border:1px solid rgba(0,0,0,0.04);background:linear-gradient(180deg,#fff,#fffef8)}
+    .item .thumb{width:82px;height:62px;border-radius:8px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--maroon);font-weight:700;background:rgba(128,0,32,0.05);font-size:14px;border:1px dashed rgba(0,0,0,0.04)}
+    .item .thumb img{width:100%;height:100%;object-fit:cover;}
+    .item .meta{flex:1;display:flex;flex-direction:column;gap:6px}
+    .item .meta .name{font-weight:700;color:var(--text);display:flex;justify-content:space-between;align-items:center}
+    .item .meta .desc{font-size:13px;color:var(--muted)}
+    .item .actions{display:flex;flex-direction:column;gap:8px}
+    .order-btn{background:var(--orange);color:#fff;border:0;padding:8px 10px;border-radius:8px;cursor:pointer;font-weight:700}
+    .order-small{background:transparent;border:1px solid var(--maroon);color:var(--maroon);padding:6px 8px;border-radius:8px;cursor:pointer;font-weight:700}
+    .qty-input{width:48px;padding:6px;border:1px solid var(--muted);border-radius:6px;text-align:center;font-weight:700}
+
+    .modal .section-order{display:flex;gap:10px;align-items:center;margin-top:12px}
+    .close-x{background:transparent;border:0;font-weight:700;color:var(--muted);cursor:pointer}
+
+    footer{padding:12px 18px;background:#fff;border-top:1px solid rgba(0,0,0,0.04);display:flex;justify-content:space-between;align-items:center}
+    .contact{color:var(--muted);font-size:13px}
+    .qr img{width:64px;height:64px;border-radius:8px;border:1px solid rgba(0,0,0,0.06)}
+    .note{font-size:12px;color:var(--muted);padding:10px 18px}
+
+    /* سلة التسوق */
+    #cartModal .cart-items{max-height:350px;overflow-y:auto;margin-bottom:12px;}
+    #cartModal .cart-item{display:flex;align-items:center;gap:10px;padding:8px;border-bottom:1px solid #ddd;}
+    #cartModal .cart-item img{width:60px;height:40px;object-fit:cover;border-radius:8px;}
+    #cartModal .cart-item-details{flex:1;display:flex;flex-direction:column;}
+    #cartModal .cart-item-name{font-weight:700;color:var(--maroon);}
+    #cartModal .cart-item-price{color:var(--muted);font-size:13px;}
+    #cartModal .cart-item-qty{width:50px;text-align:center;border:1px solid var(--muted);border-radius:6px;padding:4px;}
+    #cartModal .cart-item-remove{background:transparent;border:none;color:red;cursor:pointer;font-weight:700;font-size:16px;}
+
+    /* اختيار نوع الطلب والتوصيل */
+    .order-type-section{margin-top:10px;}
+    .order-type-section label{margin-left:6px;margin-right:12px;cursor:pointer;}
+    .order-summary{background:#fff4e6;border:1px solid var(--orange);border-radius:8px;padding:12px;margin-top:10px;font-weight:700;color:var(--maroon);}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="wrap">
+      <header>
+        <div class="brand">
+          <div class="logo">J</div>
+          <div>
+            <div class="name">جَمَار — Jamar</div>
+            <div class="sub">Classic & Comfort — المذاق الإيطالي الدافئ</div>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button id="orderNowTop" class="btn" title="اطلب عبر واتساب">اطلب الآن</button>
+          <button id="openQR" class="btn ghost">QR</button>
+          <button id="openCartBtn" class="btn">السلة (0)</button>
+        </div>
+      </header>
+
+      <div class="hero">
+        <div class="intro">
+          <h1>قائمة الأقسام — Sections</h1>
+          <p>اختر قسمًا لعرض الأصناف. يمكنك الطلب مباشرة عبر واتساب من داخل أي قسم أو لكل صنف على حدة.</p>
+        </div>
+      </div>
+
+      <div class="sections" id="sections">
+        <!-- أقسام سيتم توليدها جافاسكريبت -->
+      </div>
+
+      <p class="note">محتوى الأطباق مأخوذ من ملف المنيو.  </p>
+
+      <footer>
+        <div class="contact">اتصل بنا: 0599-888358 — التوصيل متاح</div>
+        <div class="qr">
+          <img id="qrImg" alt="QR" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://example.com/your-menu" />
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Modal عرض الأصناف -->
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-hidden="true">
+    <div class="modal" role="document" aria-modal="true">
+      <header>
+        <div>
+          <h3 id="modalTitle">قسم</h3>
+          <div id="modalDesc" style="color:var(--muted);font-size:13px;margin-top:6px"></div>
+        </div>
+        <div>
+          <button class="close-x" onclick="closeModal()">✕ إغلاق</button>
+        </div>
+      </header>
+
+      <div id="modalItems" class="items"></div>
+
+      <div class="section-order">
+        <button id="orderSectionBtn" class="order-btn">اطلب من هذا القسم عبر واتساب</button>
+        <button class="order-small" onclick="print()">طباعة / حفظ PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal سلة التسوق -->
+  <div class="modal-backdrop" id="cartModalBackdrop" role="dialog" aria-hidden="true">
+    <div class="modal" role="document" aria-modal="true" id="cartModal">
+      <header>
+        <div>
+          <h3>سلة التسوق</h3>
+        </div>
+        <div>
+          <button class="close-x" onclick="closeCartModal()">✕ إغلاق</button>
+        </div>
+      </header>
+
+      <div class="cart-items" id="cartItemsContainer"></div>
+
+      <div class="order-type-section" id="orderTypeSection" style="display:none;">
+        <div>
+          <strong>اختر نوع الطلب:</strong><br/>
+          <label><input type="radio" name="orderType" value="in-restaurant"> داخل المطعم</label>
+          <label><input type="radio" name="orderType" value="delivery"> توصيل خارجي</label>
+        </div>
+
+        <div id="deliveryCities" style="display:none; margin-top:10px;">
+          <strong>اختر المدينة:</strong><br/>
+          <label><input type="radio" name="city" value="tulkarm"> طولكرم (+10₪)</label>
+          <label><input type="radio" name="city" value="nablus"> نابلس (+20₪)</label>
+          <label><input type="radio" name="city" value="other"> أخرى (+0₪)</label>
+        </div>
+      </div>
+
+      <div class="order-summary" id="orderSummary" style="display:none;"></div>
+
+      <div class="section-order" style="margin-top:12px;">
+        <button id="checkoutBtn" class="order-btn" disabled>إتمام الطلب عبر واتساب</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // رقم الواتساب والروابط
+    const WA_NUMBER = '972599888358';
+    const BASE_WA_URL = 'https://wa.me/' + WA_NUMBER + '?text=';
+
+    // القائمة الكاملة - أقسام وأصناف مع صور وأسعار وهمية
+    const MENU = {
+      burgers: {
+        title: 'Burgers — برجر',
+        desc: 'أحجام مختلفة متوفرة: 100gm -160gm -200gm -320gm -400gm',
+        items:[
+          {name:'Beef Burger — بيف برجر', desc:'خيار كلاسيكي لحم طازج مع صلصات مميزة.', img:'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=80&q=80', price: 30},
+          {name:'Mexican Burger — مكسيكان برجر', desc:'سبايسي ميونيز، خس، بندورة، بصل، مخلل، شيدر، سيراتشا، هالبينو، جواكامولي.', img:'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=80&q=80', price: 35},
+          {name:'Classic Burger — كلاسيك برجر', desc:'نكهة تقليدية متقنة مع مكونات طازجة.', img:'https://images.unsplash.com/photo-1550317138-10000687a72b?auto=format&fit=crop&w=80&q=80', price: 28}
+        ]
+      },
+      wings: {
+        title:'Wings — أجنحة',
+        desc:'وجبات أجنحة بمذاقات متنوعة — متوفرة كقطع أو بالوزن.',
+        items:[
+          {name:'Buffelo Wings — أجنحة بآفلو', desc:'أجنحة مقلية بطعم البافلو (بطاطا، كولسلو، ايولي چارلك).', img:'https://images.unsplash.com/photo-1613101045231-30a217b1b2d2?auto=format&fit=crop&w=80&q=80', price: 40},
+          {name:'Sweet Chilli — سويت تشيلي', desc:'طعم حلو وحار خفيف، يقدم مع بطاطا وكولسلو.', img:'https://images.unsplash.com/photo-1601050690681-8d1c99776354?auto=format&fit=crop&w=80&q=80', price: 38},
+          {name:'BBQ Wings — أجنحة باربكيو', desc:'نكهة باربكيو مدخنة لذيذة.', img:'https://images.unsplash.com/photo-1543352634-9f0b57bbd785?auto=format&fit=crop&w=80&q=80', price: 42}
+        ]
+      },
+      drinks:{
+        title:'Drinks — مشروبات',
+        desc:'عصائر، كولا، وماء.',
+        items:[
+          {name:'Juice — عصير', desc:'عصير طازج بنكهات مختلفة.', img:'https://images.unsplash.com/photo-1508747703721-70d78e975330?auto=format&fit=crop&w=80&q=80', price: 12},
+          {name:'Cola — كولا', desc:'مشروب كولا بارد.', img:'https://images.unsplash.com/photo-1510626176961-4b9c84ed5649?auto=format&fit=crop&w=80&q=80', price: 10},
+          {name:'Water — ماء', desc:'ماء معدني بارد.', img:'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=80&q=80', price: 8}
+        ]
+      }
+      // يمكنك إضافة باقي الأقسام بنفس النمط هنا...
+    };
+
+    // عناصر DOM
+    const sectionsContainer = document.getElementById('sections');
+    const modalBackdrop = document.getElementById('modalBackdrop');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDesc = document.getElementById('modalDesc');
+    const modalItems = document.getElementById('modalItems');
+    const orderSectionBtn = document.getElementById('orderSectionBtn');
+
+    const cartModalBackdrop = document.getElementById('cartModalBackdrop');
+    const cartItemsContainer = document.getElementById('cartItemsContainer');
+    const openCartBtn = document.getElementById('openCartBtn');
+    const orderTypeSection = document.getElementById('orderTypeSection');
+    const deliveryCities = document.getElementById('deliveryCities');
+    const orderSummary = document.getElementById('orderSummary');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+
+    // السلة
+    let cart = [];
+
+    // إضافة عناصر القائمة للأقسام
+    function renderSections(){
+      sectionsContainer.innerHTML = '';
+      for (const key in MENU){
+        const section = MENU[key];
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.tabIndex = 0;
+        card.setAttribute('role','button');
+        card.setAttribute('aria-pressed','false');
+        card.setAttribute('aria-label', section.title + ' - ' + section.desc);
+        card.innerHTML = `
+          <div class="icon">${key.toUpperCase()}</div>
+          <div class="title">${section.title}</div>
+          <div class="subtitle">${section.desc}</div>
+          <small>عدد الأصناف: ${section.items.length}</small>
+        `;
+        card.onclick = () => openSectionModal(key);
+        card.onkeypress = e => { if(e.key === 'Enter') openSectionModal(key);}
+        sectionsContainer.appendChild(card);
+      }
+    }
+
+    // فتح مودال قسم مع الأصناف
+    let currentSectionKey = null;
+    function openSectionModal(key){
+      currentSectionKey = key;
+      const section = MENU[key];
+      modalTitle.textContent = section.title;
+      modalDesc.textContent = section.desc;
+      modalItems.innerHTML = '';
+
+      section.items.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <div class="thumb"><img src="${item.img}" alt="${item.name}"></div>
+          <div class="meta">
+            <div class="name">${item.name} <span style="font-weight:normal;color:var(--orange);">${item.price}₪</span></div>
+            <div class="desc">${item.desc}</div>
+          </div>
+          <div class="actions">
+            <input type="number" min="1" value="1" class="qty-input" aria-label="كمية ${item.name}">
+            <button class="order-btn" aria-label="أضف ${item.name} إلى السلة">أضف للسلة</button>
+          </div>
+        `;
+        // إضافة الحدث للزر
+        const btn = div.querySelector('button');
+        const qtyInput = div.querySelector('input');
+        btn.onclick = () => {
+          const qty = parseInt(qtyInput.value);
+          if(qty > 0){
+            addToCart(key, index, qty);
+            alert(`تمت إضافة ${qty} × ${item.name} إلى السلة`);
+          }
+        };
+        modalItems.appendChild(div);
+      });
+
+      // زر طلب قسم كامل
+      orderSectionBtn.onclick = () => {
+        let message = `مرحبا، أود طلب أصناف من قسم ${section.title}:\n`;
+        section.items.forEach(item => {
+          message += `- ${item.name} بسعر ${item.price}₪\n`;
+        });
+        openWhatsApp(message);
+      };
+
+      modalBackdrop.style.display = 'flex';
+      modalBackdrop.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeModal(){
+      modalBackdrop.style.display = 'none';
+      modalBackdrop.setAttribute('aria-hidden', 'true');
+    }
+
+    // وظائف السلة
+    function addToCart(sectionKey, itemIndex, qty){
+      const section = MENU[sectionKey];
+      const item = section.items[itemIndex];
+      const existing = cart.find(i => i.sectionKey === sectionKey && i.itemIndex === itemIndex);
+      if(existing){
+        existing.qty += qty;
+      } else {
+        cart.push({sectionKey, itemIndex, qty});
+      }
+      updateCartCount();
+    }
+
+    function updateCartCount(){
+      openCartBtn.textContent = `السلة (${cart.reduce((sum, i) => sum + i.qty, 0)})`;
+    }
+
+    // عرض السلة
+    openCartBtn.onclick = () => {
+      renderCartItems();
+      cartModalBackdrop.style.display = 'flex';
+      cartModalBackdrop.setAttribute('aria-hidden', 'false');
+    };
+
+    function closeCartModal(){
+      cartModalBackdrop.style.display = 'none';
+      cartModalBackdrop.setAttribute('aria-hidden', 'true');
+      resetOrderForm();
+    }
+
+    function renderCartItems(){
+      cartItemsContainer.innerHTML = '';
+      if(cart.length === 0){
+        cartItemsContainer.innerHTML = '<p>السلة فارغة</p>';
+        orderTypeSection.style.display = 'none';
+        orderSummary.style.display = 'none';
+        checkoutBtn.disabled = true;
+        return;
+      }
+      orderTypeSection.style.display = 'block';
+
+      cart.forEach((cartItem, idx) => {
+        const section = MENU[cartItem.sectionKey];
+        const item = section.items[cartItem.itemIndex];
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <img src="${item.img}" alt="${item.name}">
+          <div class="cart-item-details">
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-price">${item.price}₪ لكل قطعة</div>
+          </div>
+          <input type="number" min="1" value="${cartItem.qty}" class="cart-item-qty" aria-label="كمية ${item.name}">
+          <button class="cart-item-remove" aria-label="حذف ${item.name} من السلة">×</button>
+        `;
+        const qtyInput = div.querySelector('.cart-item-qty');
+        const removeBtn = div.querySelector('.cart-item-remove');
+
+        qtyInput.onchange = e => {
+          let val = parseInt(e.target.value);
+          if(val < 1) val = 1;
+          e.target.value = val;
+          cartItem.qty = val;
+          updateCartCount();
+          updateOrderSummary();
+        };
+        removeBtn.onclick = () => {
+          cart.splice(idx,1);
+          renderCartItems();
+          updateCartCount();
+          updateOrderSummary();
+        };
+
+        cartItemsContainer.appendChild(div);
+      });
+      updateOrderSummary();
+    }
+
+    // تعامل مع نوع الطلب والتوصيل
+    orderTypeSection.addEventListener('change', e => {
+      if(e.target.name === 'orderType'){
+        if(e.target.value === 'delivery'){
+          deliveryCities.style.display = 'block';
+        } else {
+          deliveryCities.style.display = 'none';
+          clearCitySelection();
+        }
+      }
+      updateOrderSummary();
+    });
+
+    deliveryCities.addEventListener('change', e => {
+      updateOrderSummary();
+    });
+
+    function clearCitySelection(){
+      const cityRadios = deliveryCities.querySelectorAll('input[name="city"]');
+      cityRadios.forEach(r => r.checked = false);
+    }
+
+    // تحديث ملخص الطلب وتفعيل زر الإتمام
+    function updateOrderSummary(){
+      if(cart.length === 0){
+        orderSummary.style.display = 'none';
+        checkoutBtn.disabled = true;
+        return;
+      }
+      let total = 0;
+      cart.forEach(ci => {
+        const item = MENU[ci.sectionKey].items[ci.itemIndex];
+        total += item.price * ci.qty;
+      });
+
+      let orderType = document.querySelector('input[name="orderType"]:checked');
+      let deliveryCost = 0;
+      let deliveryCity = '';
+      if(orderType && orderType.value === 'delivery'){
+        const city = document.querySelector('input[name="city"]:checked');
+        if(city){
+          deliveryCity = city.value;
+          if(deliveryCity === 'tulkarm') deliveryCost = 10;
+          else if(deliveryCity === 'nablus') deliveryCost = 20;
+          else deliveryCost = 0;
+        } else {
+          // يجب اختيار المدينة
+          orderSummary.textContent = 'يرجى اختيار المدينة لتحديد تكلفة التوصيل';
+          orderSummary.style.display = 'block';
+          checkoutBtn.disabled = true;
+          return;
+        }
+      }
+      const finalTotal = total + deliveryCost;
+      orderSummary.innerHTML = `مجموع الأطباق: ${total}₪<br>تكلفة التوصيل: ${deliveryCost}₪<br><strong>المجموع الكلي: ${finalTotal}₪</strong>`;
+      orderSummary.style.display = 'block';
+      checkoutBtn.disabled = false;
+    }
+
+    // زر إنهاء الطلب يفتح واتساب مع رسالة مفصلة
+    checkoutBtn.onclick = () => {
+      if(cart.length === 0) return alert('السلة فارغة!');
+
+      let message = 'مرحبا، أود طلب:\n';
+      cart.forEach(ci => {
+        const item = MENU[ci.sectionKey].items[ci.itemIndex];
+        message += `- ${item.name} × ${ci.qty} = ${item.price * ci.qty}₪\n`;
+      });
+
+      let orderType = document.querySelector('input[name="orderType"]:checked');
+      if(orderType){
+        if(orderType.value === 'in-restaurant'){
+          message += 'نوع الطلب: داخل المطعم\n';
+          message += 'لا حاجة لتوصيل.\n';
+        } else if(orderType.value === 'delivery'){
+          const city = document.querySelector('input[name="city"]:checked');
+          if(city){
+            let deliveryFee = 0;
+            if(city.value === 'tulkarm') deliveryFee = 10;
+            else if(city.value === 'nablus') deliveryFee = 20;
+            message += `نوع الطلب: توصيل خارجي إلى ${city.nextSibling.textContent.trim()}\n`;
+            message += `تكلفة التوصيل: ${deliveryFee}₪\n`;
+          } else {
+            alert('يرجى اختيار المدينة لتوصيل الطلب');
+            return;
+          }
+        }
+      }
+      message += 'شكراً لكم!';
+
+      openWhatsApp(message);
+    };
+
+    // فتح واتساب مع رسالة مشفرة بالترميز URI
+    function openWhatsApp(message){
+      const encoded = encodeURIComponent(message);
+      const url = BASE_WA_URL + encoded;
+      window.open(url, '_blank');
+    }
+
+    // زر طلب الآن أعلى الصفحة يفتح واتساب نصي عام
+    document.getElementById('orderNowTop').onclick = () => {
+      openWhatsApp('مرحبا، أود طلب الطعام من قائمة جَمَار.');
+    };
+
+    // زر فتح صورة QR
+    document.getElementById('openQR').onclick = () => {
+      alert('يمكنك مسح رمز الاستجابة السريعة (QR) لزيارة الموقع.');
+    };
+
+    // إغلاق المودال
+    modalBackdrop.onclick = e => {
+      if(e.target === modalBackdrop){
+        closeModal();
+      }
+    };
+    cartModalBackdrop.onclick = e => {
+      if(e.target === cartModalBackdrop){
+        closeCartModal();
+      }
+    };
+
+    // إعادة تعيين النموذج عند إغلاق السلة
+    function resetOrderForm(){
+      orderTypeSection.style.display = 'none';
+      deliveryCities.style.display = 'none';
+      clearCitySelection();
+      orderSummary.style.display = 'none';
+      checkoutBtn.disabled = true;
+    }
+
+    // بدء تحميل الصفحة
+    renderSections();
+    updateCartCount();
+
+  </script>
+</body>
+</html>
